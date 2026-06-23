@@ -1,0 +1,187 @@
+/* css/style.css */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+main {
+    flex: 1;
+}
+
+.card-img-top {
+    object-fit: cover;
+    height: 200px;
+}
+
+/* Estado activo del menú */
+.nav-link.active {
+    border-bottom: 2px solid #0d6efd;
+}
+
+/* Ajuste personalizado para el logo en la barra de navegación */
+.logo-navbar {
+    height: 40px;      
+    width: auto;       
+    max-width: 100%;   
+}
+
+/* Ajuste para las imágenes del carrusel del catálogo */
+.carousel-inner img {
+    height: 220px; 
+    width: 100%; 
+    object-fit: contain; 
+    background-color: #f8f9fa; 
+    padding: 10px; 
+}
+
+/* ==========================================
+   SECCIÓN DE BENEFICIOS (INDEX)
+   ========================================== */
+
+/* 1. Estado inicial de la tarjeta de beneficio */
+.card-benefit {
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+    will-change: transform, box-shadow; 
+}
+/* 2. Ajuste uniforme para ver las imágenes COMPLETAS */
+.card-benefit .card-img-top {
+    height: 160px;          
+    object-fit: contain;    
+    padding: 20px;          
+    background-color: #ffffff; 
+}
+
+/* 3. Animación al pasar el mouse (Hover) */
+.card-benefit:hover {
+    transform: translateY(-8px); 
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important; 
+}
+
+.img-quienes-somos {
+    max-width: 500px !important; 
+    height: auto; 
+}
+
+/* ==========================================
+   ANIMACIÓN DEL MENÚ DE NAVEGACIÓN (NAVBAR)
+   ========================================== */
+
+/* 1. Estado inicial de los botones del menú */
+.navbar-nav .nav-link {
+    transition: transform 0.2s ease, color 0.2s ease; 
+    display: inline-block; 
+}
+
+/* 2. Efecto al pasar el mouse (Hover) */
+.navbar-nav .nav-link:hover {
+    color: #0d6efd !important; 
+    transform: scale(1.15);    
+}
+
+/* ==========================================
+   BOTÓN HERO EN MOVIMIENTO (LATIDO INFINITO)
+   ========================================== */
+
+/* 1. Definimos las reglas del movimiento */
+@keyframes latidoCta {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 4px 6px rgba(13, 110, 253, 0.3);
+    }
+    50% {
+        transform: scale(1.05); 
+        box-shadow: 0 12px 24px rgba(13, 110, 253, 0.5); 
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 4px 6px rgba(13, 110, 253, 0.3);
+    }
+}
+
+/* 2. Aplicamos la animación al botón */
+.btn-movimiento-cta {
+    display: inline-block;
+    animation: latidoCta 2.5s infinite ease-in-out; 
+    transition: all 0.2s ease; /
+}
+
+/* 3. Comportamiento interactivo al pasar el mouse (Hover) */
+.btn-movimiento-cta:hover {
+    animation-play-state: paused; 
+    transform: scale(1.08); 
+    box-shadow: 0 8px 16px rgba(13, 110, 253, 0.4);
+}
+
+/* ==========================================
+   UNIFICACIÓN DE FONDOS Y PALETA (INDEX)
+   ========================================== */
+
+/* 1. El fondo del Hero */
+.hero-section {
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%) !important;
+    border-bottom: none !important; 
+}
+
+/* 2. Sección Quiénes Somos*/
+.bg-white {
+    background-color: #ffffff !important;
+}
+
+/* 3. Sección Beneficios*/
+.bg-light {
+    background-color: #f1f3f5 !important;
+    border-top: 1px solid #e9ecef !important; 
+}
+
+/* 4.tarjetas de beneficios*/
+.card-benefit {
+    background-color: #ffffff !important;
+}
+
+/* ==========================================
+   LIMPIEZA DE FONDOS EN EL CATÁLOGO
+   ========================================== */
+
+/* 1. Forzar que el fondo de las tarjetas sea blanco puro */
+#contenedor-productos .card {
+    background-color: #ffffff !important;
+}
+
+/* 2. Forzar que la zona del carrusel de imágenes sea blanca pura */
+#contenedor-productos .carousel,
+#contenedor-productos .carousel-inner,
+#contenedor-productos .carousel-item {
+    background-color: #ffffff !important;
+}
+
+/* 3. Darle un fondo blanco limpio a las propias imágenes por seguridad */
+#contenedor-productos .card-img-top {
+    background-color: #ffffff !important;
+    object-fit: contain; 
+}
+
+/* Por defecto (Celulares y Tablets): El carrito se queda abajo normalmente */
+.carrito-responsivo {
+    position: relative;
+    top: 0 !important;
+    margin-top: 20px;
+}
+
+/* Solo en pantallas de Computadores (desde 992px hacia arriba) */
+@media (min-width: 992px) {
+    .carrito-responsivo {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 75px !important; 
+        z-index: 1020;
+    }
+}
+
+/* Forzar ancho completo de tarjetas en pantallas muy pequeñas */
+@media (max-width: 768px) {
+    #contenedor-productos .col-md-6 {
+        width: 100% !important;
+    }
+}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InacapStore - Inicio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Estilos específicos para mejorar el aspecto visual del Index */
+        .hero-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        .card-benefit img {
+            height: 180px;
+            object-fit: cover;
+        }
+        .promo-card {
+            transition: transform 0.3s ease;
+        }
+        .promo-card:hover {
+            transform: translateY(-5px);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="assets/logo.png" alt="Logo InacapStore" class="logo-navbar" style="height: 40px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active fw-bold text-primary" href="index.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="catalogo.html">Catálogo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero-section py-5 border-bottom">
+            <div class="container py-4">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6">
+                        <span class="badge bg-danger mb-2 px-3 py-2 fs-6">¡Ofertas Exclusivas de la Semana!</span>
+                        <h1 class="display-4 fw-bold text-dark mb-3">Renueva tu espacio tecnológico con InacapStore</h1>
+                        <p class="lead text-muted mb-4">Descubre los mejores productos con descuentos de hasta un 40%. Equipos certificados, garantía extendida y envío rápido a todo el país.</p>
+                        <a href="catalogo.html" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold shadow-sm btn-movimiento-cta">Ver Todo el Catálogo</a>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="row g-3">
+                            <div class="col-sm-6" onclick="location.href='catalogo.html';">
+                                <div class="card h-100 border-0 shadow-sm promo-card">
+                                    <span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded-pill small fw-bold">-30%</span>
+                                    <img src="assets/producto-oferta1.png" class="card-img-top p-2 rounded-4" alt="Teclado Gamer" onerror="this.src='https://via.placeholder.com/250x180?text=Producto+Oferta+1'">
+                                    <div class="card-body pt-0">
+                                        <h6 class="card-title fw-bold mb-1 text-truncate">Teclado Mecánico RGB</h6>
+                                        <p class="text-danger fw-bold mb-0"><del class="text-muted small fw-normal">$49.990</del> $34.990</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" onclick="location.href='catalogo.html';">
+                                <div class="card h-100 border-0 shadow-sm promo-card">
+                                    <span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded-pill small fw-bold">-25%</span>
+                                    <img src="assets/producto-oferta2.png" class="card-img-top p-2 rounded-4" alt="Audífonos Pro" onerror="this.src='https://via.placeholder.com/250x180?text=Producto+Oferta+2'">
+                                    <div class="card-body pt-0">
+                                        <h6 class="card-title fw-bold mb-1 text-truncate">Audífonos Wireless Pro</h6>
+                                        <p class="text-danger fw-bold mb-0"><del class="text-muted small fw-normal">$79.990</del> $59.990</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-md-6">
+                <h2 class="fw-bold mb-3 text-dark">Quiénes Somos</h2>
+                <div class="hr-theme mb-4" style="width: 60px; height: 4px; background-color: var(--bs-primary); border-radius: 2px;"></div>
+                <p class="text-muted fs-5 lh-base">En <strong>InacapStore</strong> nacimos con el propósito de acercar la mejor tecnología a estudiantes, profesionales y entusiastas del sector. Nos apasiona ofrecer soluciones de hardware y periféricos de alta calidad que potencien tu rendimiento diario.</p>
+                <p class="text-muted lh-base">Con años de experience en el mercado nacional, nos destacamos por nuestro servicio al cliente personalizado, un catálogo seleccionado rigurosamente y un fuerte compromiso con el desarrollo académico y tecnológico del país.</p>
+            </div>
+            
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <img src="assets/quienes-somos.png" 
+                     alt="Equipo de InacapStore" 
+                     class="img-fluid rounded-4 shadow" 
+                     style="max-width: 100%; width: 400px; height: auto;"
+                     onerror="this.src='https://via.placeholder.com/450x300?text=Nuestra+Empresa'">
+            </div>
+        </div>
+    </div>
+</section>
+
+        <section class="py-5 bg-light border-top">
+            <div class="container py-4">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold text-dark">¿Por qué elegir InacapStore?</h2>
+                    <p class="text-muted">Diseñamos nuestra experiencia pensando en darte el máximo beneficio y seguridad.</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm card-benefit rounded-4 overflow-hidden">
+                            <img src="assets/envio.png" class="card-img-top" alt="Envío Rápido" onerror="this.src='https://via.placeholder.com/400x200?text=Env%C3%ADo+Express'">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold">Envío Express Asegurado</h5>
+                                <p class="card-text text-muted">Despachamos tus compras de manera segura y rápida. Monitorea tu pedido en tiempo real hasta la puerta de tu hogar o sucursal.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm card-benefit rounded-4 overflow-hidden">
+                            <img src="assets/garantia.png" class="card-img-top" alt="Garantía Extendida" onerror="this.src='https://via.placeholder.com/400x200?text=Garant%C3%ADa+Oficial'">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold">Garantía Real y Soporte</h5>
+                                <p class="card-text text-muted">Todos nuestros productos cuentan con el respaldo oficial de las marcas más importantes. Te acompañamos ante cualquier eventualidad técnica.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm card-benefit rounded-4 overflow-hidden">
+                            <img src="assets/pago.png" class="card-img-top" alt="Pago Seguro" onerror="this.src='https://via.placeholder.com/400x200?text=Pago+100%25+Seguro'">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold">Pagos 100% Seguros</h5>
+                                <p class="card-text text-muted">Compra con total tranquilidad usando Webpay, tarjetas de crédito, débito o transferencia bancaria. Protegemos tus datos de extremo a extremo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-dark text-white text-center py-3">
+        <p class="mb-0">&copy; 2026 InacapStore. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
