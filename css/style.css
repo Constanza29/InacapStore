@@ -190,6 +190,12 @@ main {
    BLOQUEO DE DESBORDE HORIZONTAL (INICIO)
    ========================================== */
 html, body {
-    max-width: 100%;
-    overflow-x: hidden;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+/* Forzamos también al contenedor principal a no salirse jamás */
+main, .container, .container-fluid {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
 }
