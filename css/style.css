@@ -185,3 +185,11 @@ main {
         width: 100% !important;
     }
 }
+
+/* ==========================================
+   BLOQUEO DE DESBORDE HORIZONTAL (INICIO)
+   ========================================== */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
