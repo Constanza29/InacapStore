@@ -4,7 +4,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     background-color: #f8f9fa;
-    padding-top: 95px !important;
+    padding-top: 78px !important;
 }
 
 main {
@@ -175,7 +175,7 @@ main {
     .carrito-responsivo {
         position: -webkit-sticky;
         position: sticky;
-        top: 115px !important; 
+        top: 98px !important; 
         z-index: 1020;
     }
 }
