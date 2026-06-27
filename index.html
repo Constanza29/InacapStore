@@ -35,10 +35,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active fw-bold text-primary" href="index.html">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="catalogo.html">Catálogo</a></li>
-                    <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+                <ul class="navbar-nav ms-auto" id="menu-navegacion">
                 </ul>
             </div>
         </div>
@@ -82,23 +79,27 @@
                 </div>
             </div>
         </section>
-<section class="py-5 bg-white">
-    <div class="container py-4">
-        <div class="row align-items-center g-5">
-            <div class="col-md-6">
+<section class="py-4 py-md-5 bg-white overflow-hidden">
+    
+    <div class="container">
+        
+        <div class="row align-items-center g-4">
+            
+            <div class="col-12 col-md-6">
                 <h2 class="fw-bold mb-3 text-dark">Quiénes Somos</h2>
                 <div class="hr-theme mb-4" style="width: 60px; height: 4px; background-color: var(--bs-primary); border-radius: 2px;"></div>
                 <p class="text-muted fs-5 lh-base">En <strong>InacapStore</strong> nacimos con el propósito de acercar la mejor tecnología a estudiantes, profesionales y entusiastas del sector. Nos apasiona ofrecer soluciones de hardware y periféricos de alta calidad que potencien tu rendimiento diario.</p>
                 <p class="text-muted lh-base">Con años de experiencia en el mercado nacional, nos destacamos por nuestro servicio al cliente personalizado, un catálogo seleccionado rigurosamente y un fuerte compromiso con el desarrollo académico y tecnológico del país.</p>
             </div>
             
-            <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <div class="col-12 col-md-6 d-flex align-items-center justify-content-center justify-content-md-end">
                 <img src="assets/quienes-somos.png" 
-                     alt="Equipo de InacapStore" 
-                     class="img-fluid rounded-4 shadow" 
-                     style="max-width: 100%; width: 400px; height: auto;"
-                     onerror="this.src='https://via.placeholder.com/450x300?text=Nuestra+Empresa'">
+                    alt="Equipo de InacapStore" 
+                    class="img-fluid rounded-4 shadow" 
+                    style="width: 100%; max-width: 650px; height: auto; display: block;"
+                    onerror="this.src='https://via.placeholder.com/600x300?text=Nuestra+Empresa'">
             </div>
+
         </div>
     </div>
 </section>
@@ -150,5 +151,8 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="js/init.js"></script>
+</body>
 </body>
 </html>
