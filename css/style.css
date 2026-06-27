@@ -171,7 +171,8 @@ main, .container, .container-fluid {
     .carrito-responsivo {
         position: -webkit-sticky;
         position: sticky;
-        top: 98px !important; 
+        top: 95px !important; /* Ajusta este número si al bajar se pega mucho al menú */
+        margin-top: 0 !important; /* <- ELIMINAMOS EL MARGEN QUE LO EMPUJA HACIA ABAJO */
         z-index: 1020;
     }
 }
