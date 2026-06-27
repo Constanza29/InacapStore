@@ -1,3 +1,5 @@
+// js/catalogo.js - Lógica del Catálogo con Ofertas, Gestión de Carrito y Filtros Tolerante a Errores
+
 // ==========================================
 // 1. UTILIDADES
 // ==========================================
@@ -5,65 +7,140 @@ function formatearDinero(valor) {
     return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(valor);
 }
 
+function mostrarAlertaMensaje(mensaje, tipo) {
+    const contenedorAlerta = document.getElementById("alerta-carrito");
+    if (!contenedorAlerta) return;
+
+    contenedorAlerta.innerHTML = `
+        <div class="alert alert-${tipo} alert-dismissible fade show fw-bold text-center shadow-sm" role="alert">
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 // ==========================================
-// 2. RENDERIZAR PRODUCTOS (Con soporte de ofertas)
+// 2. CONFIGURACIÓN INICIAL DE FILTROS
 // ==========================================
-function renderizarProductos() {
+function configurarFiltros(productos) {
+    const filtroCategoria = document.getElementById("filtro-categoria");
+    const filtroPrecio = document.getElementById("filtro-precio");
+    const precioMaxTxt = document.getElementById("precio-max-txt");
+    const rangoLimiteTxt = document.getElementById("rango-limite-txt");
+
+    if (!filtroCategoria || !filtroPrecio) return;
+
+    // Extraer categorías de forma segura
+    const categoriasUnicas = [...new Set(productos.map(p => p.categoria || "Otros"))];
+
+    let opcionesHTML = `<option value="TODAS">Todas las categorías</option>`;
+    categoriasUnicas.forEach(cat => {
+        opcionesHTML += `<option value="${cat}">${cat}</option>`;
+    });
+    filtroCategoria.innerHTML = opcionesHTML;
+
+    // Calcular los precios con oferta para el rango máximo
+    const productosConPrecioOferta = productos.map(p => {
+        let copia = { ...p };
+        if (copia.nombre && copia.nombre.toLowerCase().includes('teclado')) copia.precio = 34990;
+        else if (copia.nombre && (copia.nombre.toLowerCase().includes('audífonos') || copia.nombre.toLowerCase().includes('audifonos'))) copia.precio = 59990;
+        return copia;
+    });
+
+    const precioMasAlto = productosConPrecioOferta.reduce((max, p) => p.precio > max ? p.precio : max, 80000);
+
+    filtroPrecio.max = precioMasAlto * 2; 
+    filtroPrecio.value = precioMasAlto * 2;
+
+    if (precioMaxTxt) precioMaxTxt.textContent = formatearDinero(precioMasAlto * 2);
+    if (rangoLimiteTxt) rangoLimiteTxt.textContent = formatearDinero(precioMasAlto * 2);
+}
+
+function aplicarFiltrosCombinados() {
+    const productos = JSON.parse(localStorage.getItem('productos')) || [];
+    const filtroCat = document.getElementById("filtro-categoria");
+    const filtroPre = document.getElementById("filtro-precio");
+
+    if (!filtroCat || !filtroPre) {
+        renderizarProductos(productos);
+        return;
+    }
+
+    const categoriaSeleccionada = filtroCat.value;
+    const precioMaximoSeleccionado = Number(filtroPre.value);
+
+    const productosFiltrados = productos.filter(producto => {
+        let precioEvaluar = producto.precio || 0;
+        if (producto.nombre && producto.nombre.toLowerCase().includes('teclado')) precioEvaluar = 34990;
+        else if (producto.nombre && (producto.nombre.toLowerCase().includes('audífonos') || producto.nombre.toLowerCase().includes('audifonos'))) precioEvaluar = 59990;
+
+        const catProducto = producto.categoria || "Otros";
+        
+        const cumpleCategoria = (categoriaSeleccionada === "TODAS" || catProducto === categoriaSeleccionada);
+        const cumplePrecio = (precioEvaluar <= precioMaximoSeleccionado);
+        
+        return cumpleCategoria && cumplePrecio;
+    });
+
+    renderizarProductos(productosFiltrados);
+}
+
+// ==========================================
+// 3. RENDERIZAR PRODUCTOS
+// ==========================================
+function renderizarProductos(productosAMostrar) {
     const contenedor = document.getElementById('contenedor-productos');
     if (!contenedor) return; 
     
     contenedor.innerHTML = ''; 
 
-    let productos = JSON.parse(localStorage.getItem('productos')) || [];
+    if (!productosAMostrar || productosAMostrar.length === 0) {
+        contenedor.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <p class="text-muted fs-5">No se encontraron productos en esta selección.</p>
+            </div>
+        `;
+        return;
+    }
 
-    productos.forEach(producto => {
+    productosAMostrar.forEach(producto => {
         const agotado = producto.stock === 0;
         
-        // -------------------------------------------------------------
-        // DETECTOR DE OFERTAS INTELIGENTE
-        // -------------------------------------------------------------
         let precioHTML = `<strong>Precio:</strong> ${formatearDinero(producto.precio)}`;
         let etiquetaOferta = '';
 
-        // Detectar si es el Teclado Mecánico
-        if (producto.nombre.toLowerCase().includes('teclado')) {
+        if (producto.nombre && producto.nombre.toLowerCase().includes('teclado')) {
             const precioOriginal = 49990;
             const precioOferta = 34990;
-            // Sobrescribimos temporalmente el precio para la lógica del carrito
-            producto.precio = precioOferta; 
-            
             etiquetaOferta = `<span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded-pill small fw-bold" style="z-index: 10;">-30% Oferta</span>`;
             precioHTML = `<strong>Precio:</strong> <del class="text-muted small fw-normal">${formatearDinero(precioOriginal)}</del> <span class="text-danger fw-bold">${formatearDinero(precioOferta)}</span>`;
         } 
-        // Detectar si son los Audífonos
-        else if (producto.nombre.toLowerCase().includes('audífonos') || producto.nombre.toLowerCase().includes('audifonos')) {
+        else if (producto.nombre && (producto.nombre.toLowerCase().includes('audífonos') || producto.nombre.toLowerCase().includes('audifonos'))) {
             const precioOriginal = 79990;
             const precioOferta = 59990;
-            // Sobrescribimos temporalmente el precio para la lógica del carrito
-            producto.precio = precioOferta;
-            
             etiquetaOferta = `<span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded-pill small fw-bold" style="z-index: 10;">-25% Oferta</span>`;
             precioHTML = `<strong>Precio:</strong> <del class="text-muted small fw-normal">${formatearDinero(precioOriginal)}</del> <span class="text-danger fw-bold">${formatearDinero(precioOferta)}</span>`;
         }
-        // -------------------------------------------------------------
+
+        const img1 = producto.imagenes && producto.imagenes[0] ? producto.imagenes[0] : 'assets/placeholder.png';
+        const img2 = producto.imagenes && producto.imagenes[1] ? producto.imagenes[1] : img1;
 
         const carruselHTML = `
             <div id="carrusel-${producto.id}" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="${producto.imagenes[0]}" class="card-img-top" alt="${producto.nombre} - 1">
+                        <img src="${img1}" class="card-img-top p-3" alt="${producto.nombre} - 1" style="height: 180px; object-fit: contain;">
                     </div>
                     <div class="carousel-item">
-                        <img src="${producto.imagenes[1]}" class="card-img-top" alt="${producto.nombre} - 2">
+                        <img src="${img2}" class="card-img-top p-3" alt="${producto.nombre} - 2" style="height: 180px; object-fit: contain;">
                     </div>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#carrusel-${producto.id}" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color: rgba(0,0,0,0.5); border-radius: 50%;"></span>
-                    <span class="visually-hidden">Anterior</span>
+                    <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color: rgba(0,0,0,0.4); border-radius: 50%;"></span>
                 </button>
                 <button class="carousel-control-next" type="button" data-bs-target="#carrusel-${producto.id}" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true" style="background-color: rgba(0,0,0,0.5); border-radius: 50%;"></span>
-                    <span class="visually-hidden">Siguiente</span>
+                    <span class="carousel-control-next-icon" aria-hidden="true" style="background-color: rgba(0,0,0,0.4); border-radius: 50%;"></span>
                 </button>
             </div>
         `;
@@ -74,14 +151,15 @@ function renderizarProductos() {
                     ${etiquetaOferta}
                     ${carruselHTML}
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold">${producto.nombre}</h5>
-                        <p class="card-text text-muted mb-1">${producto.descripcion}</p>
-                        <p class="card-text mb-1">${precioHTML}</p>
-                        <p class="card-text text-${agotado ? 'danger fw-bold' : 'success'}">
+                        <span class="badge bg-secondary mb-2 align-self-start">${producto.categoria || 'General'}</span>
+                        <h5 class="card-title fw-bold text-dark">${producto.nombre}</h5>
+                        <p class="card-text text-muted mb-1 small">${producto.descripcion}</p>
+                        <p class="card-text mb-1 small">${precioHTML}</p>
+                        <p class="card-text small text-${agotado ? 'danger fw-bold' : 'success'}">
                             ${agotado ? '¡Agotado!' : `Stock disponible: ${producto.stock}`}
                         </p>
                         <button 
-                            class="btn ${agotado ? 'btn-secondary disabled' : 'btn-primary'} mt-auto" 
+                            class="btn ${agotado ? 'btn-secondary disabled' : 'btn-primary'} mt-auto fw-bold" 
                             onclick="agregarProducto(${producto.id})"
                             ${agotado ? 'disabled' : ''}>
                             ${agotado ? 'Sin Stock' : 'Agregar al Carrito'}
@@ -95,11 +173,10 @@ function renderizarProductos() {
 }
 
 // ==========================================
-// 3. RENDERIZAR CARRITO (Adaptada a tu Tabla HTML)
+// 4. RENDERIZAR CARRITO 
 // ==========================================
 function renderizarCarrito() {
     let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-    // Cambiado al ID real de tu HTML: 'cuerpo-carrito'
     const listaCarrito = document.getElementById('cuerpo-carrito'); 
     const totalCarrito = document.getElementById('total-carrito'); 
 
@@ -108,7 +185,6 @@ function renderizarCarrito() {
     listaCarrito.innerHTML = '';
     let total = 0;
 
-    // Mensaje si el carrito está vacío (adaptado para ocupar las 3 columnas de la tabla)
     if (carrito.length === 0) {
         listaCarrito.innerHTML = `
             <tr>
@@ -121,7 +197,6 @@ function renderizarCarrito() {
         return;
     }
 
-    // Dibujar cada fila de la tabla
     carrito.forEach(producto => {
         const subtotal = producto.precio * producto.cantidad;
         total += subtotal;
@@ -129,21 +204,21 @@ function renderizarCarrito() {
         const itemHTML = `
             <tr>
                 <td>
-                    <span class="fw-bold d-block">${producto.nombre}</span>
+                    <span class="fw-bold d-block text-dark small">${producto.nombre}</span>
                     <small class="text-muted">${formatearDinero(producto.precio)} c/u</small>
                 </td>
                 
                 <td>
-                    <div class="d-flex align-items-center gap-1">
-                        <button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="restarProducto(${producto.id})">-</button>
+                    <div class="d-flex align-items-center gap-1 mt-1">
+                        <button class="btn btn-sm btn-outline-secondary py-0 px-1 fw-bold" style="font-size:0.75rem;" onclick="restarProducto(${producto.id})">-</button>
                         <span class="badge bg-primary">${producto.cantidad}</span>
-                        <button class="btn btn-sm btn-danger py-0 px-1" onclick="eliminarDelCarrito(${producto.id})" title="Eliminar">
+                        <button class="btn btn-sm btn-danger py-0 px-1" style="font-size:0.75rem;" onclick="eliminarDelCarrito(${producto.id})" title="Eliminar">
                             🗑️
                         </button>
                     </div>
                 </td>
                 
-                <td class="text-end align-middle fw-bold">
+                <td class="text-end align-middle fw-bold text-secondary small">
                     ${formatearDinero(subtotal)}
                 </td>
             </tr>
@@ -151,65 +226,49 @@ function renderizarCarrito() {
         listaCarrito.innerHTML += itemHTML;
     });
 
-    // Actualizar el total de la compra (tu ID 'total-carrito' ya estaba perfecto)
     if (totalCarrito) {
         totalCarrito.innerText = formatearDinero(total);
     }
 }
+
 // ==========================================
-// 4. LÓGICA DE STOCK Y CARRITO
+// 5. LÓGICA DE STOCK Y CARRITO
 // ==========================================
 function agregarProducto(id) {
-    console.log("1. Botón clickeado. ID recibido:", id);
-
     let productos = JSON.parse(localStorage.getItem('productos')) || [];
     let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
     let productoCatalogo = productos.find(p => p.id == id);
     
-    if (!productoCatalogo) {
-        console.error("Error: No se encontró el producto en el LocalStorage.");
-        return;
-    }
+    if (!productoCatalogo || productoCatalogo.stock <= 0) return;
 
-    if (productoCatalogo.stock <= 0) {
-        console.warn("El producto ya no tiene stock.");
-        return;
+    if (productoCatalogo.nombre && productoCatalogo.nombre.toLowerCase().includes('teclado')) {
+        productoCatalogo.precio = 34990; 
+    } else if (productoCatalogo.nombre && (productoCatalogo.nombre.toLowerCase().includes('audífonos') || productoCatalogo.nombre.toLowerCase().includes('audifonos'))) {
+        productoCatalogo.precio = 59990; 
     }
-
-    // -------------------------------------------------------------
-    // ¡AQUÍ ESTÁ LA CORRECCIÓN! 
-    // Forzamos el precio de oferta en la lógica del carrito antes de guardarlo
-    // -------------------------------------------------------------
-    if (productoCatalogo.nombre.toLowerCase().includes('teclado')) {
-        productoCatalogo.precio = 34990; // Precio de oferta de la portada
-    } else if (productoCatalogo.nombre.toLowerCase().includes('audífonos') || productoCatalogo.nombre.toLowerCase().includes('audifonos')) {
-        productoCatalogo.precio = 59990; // Precio de oferta de la portada
-    }
-    // -------------------------------------------------------------
 
     let productoEnCarrito = carrito.find(p => p.id == id);
 
     if (productoEnCarrito) {
         productoEnCarrito.cantidad++;
-        // Nos aseguramos de que si ya existía en el carrito, también tenga el precio de oferta
         productoEnCarrito.precio = productoCatalogo.precio; 
-        console.log("2. Producto ya estaba en carrito. Sumando cantidad con precio oferta.");
     } else {
-        carrito.push({ ...productoCatalogo, cantidad: 1 });
-        console.log("2. Producto nuevo agregado al carrito con precio oferta.");
+        carrito.push({
+            id: productoCatalogo.id,
+            nombre: productoCatalogo.nombre,
+            precio: productoCatalogo.precio,
+            categoria: productoCatalogo.categoria || 'General',
+            cantidad: 1
+        });
     }
 
-    // Restar el stock en el catálogo
     productoCatalogo.stock--;
 
-    // Guardar en la memoria local
     localStorage.setItem('productos', JSON.stringify(productos));
     localStorage.setItem('carrito', JSON.stringify(carrito));
-    console.log("3. Memoria actualizada con precios de oferta.");
 
-    // Recargar la pantalla
-    renderizarProductos();
+    aplicarFiltrosCombinados();
     renderizarCarrito();
 }
 
@@ -229,7 +288,7 @@ function restarProducto(id) {
             localStorage.setItem('carrito', JSON.stringify(carrito));
             
             renderizarCarrito();
-            renderizarProductos(); 
+            aplicarFiltrosCombinados(); 
         } else {
             eliminarDelCarrito(id);
         }
@@ -251,14 +310,89 @@ function eliminarDelCarrito(id) {
         localStorage.setItem('carrito', JSON.stringify(carrito));
         
         renderizarCarrito();
-        renderizarProductos();
+        aplicarFiltrosCombinados();
     }
 }
 
 // ==========================================
-// 5. INICIALIZACIÓN (El motor de arranque)
+// 6. FUNCIONALIDADES ADICIONALES DEL CARRITO
+// ==========================================
+
+function vaciarCarritoCompleto() {
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    if (carrito.length === 0) return;
+
+    let productos = JSON.parse(localStorage.getItem('productos')) || [];
+
+    carrito.forEach(item => {
+        const prodInv = productos.find(p => p.id === item.id);
+        if (prodInv) {
+            prodInv.stock += item.cantidad;
+        }
+    });
+
+    localStorage.setItem('carrito', JSON.stringify([]));
+    localStorage.setItem('productos', JSON.stringify(productos));
+
+    // Vaciado silencioso (sin alertas en pantalla)
+    aplicarFiltrosCombinados();
+    renderizarCarrito();
+}
+
+function procesarCompraCarrito() {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    if (carrito.length === 0) {
+        mostrarAlertaMensaje("Tu carrito está vacío. Agrega productos antes de pagar.", "danger");
+        return;
+    }
+
+    // Tu validación original estricta de usuario registrado
+    const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
+    if (!usuarioActivo) {
+        mostrarAlertaMensaje("Debes iniciar sesión con tu cuenta para poder realizar una compra.", "danger");
+        return;
+    }
+
+    const nombreCliente = usuarioActivo.nombre || "Usuario";
+
+    // Compra exitosa: se limpia el carrito permanentemente
+    localStorage.setItem('carrito', JSON.stringify([]));
+
+    mostrarAlertaMensaje(`¡Compra exitosa! Muchas gracias por tu preferencia, ${nombreCliente}.`, "success");
+    
+    renderizarCarrito();
+}
+
+// ==========================================
+// 7. INICIALIZACIÓN 
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    renderizarProductos();
+    const productos = JSON.parse(localStorage.getItem('productos')) || [];
+    
+    configurarFiltros(productos);
+    aplicarFiltrosCombinados();
     renderizarCarrito();
+
+    const btnVaciar = document.getElementById("btn-vaciar");
+    const btnComprar = document.getElementById("btn-comprar");
+
+    if (btnVaciar) btnVaciar.addEventListener("click", vaciarCarritoCompleto);
+    if (btnComprar) btnComprar.addEventListener("click", procesarCompraCarrito);
+
+    const filtroCategoria = document.getElementById("filtro-categoria");
+    const filtroPrecio = document.getElementById("filtro-precio");
+    const precioMaxTxt = document.getElementById("precio-max-txt");
+
+    if (filtroCategoria) {
+        filtroCategoria.addEventListener("change", aplicarFiltrosCombinados);
+    }
+    
+    if (filtroPrecio) {
+        filtroPrecio.addEventListener("input", (e) => {
+            if (precioMaxTxt) {
+                precioMaxTxt.textContent = formatearDinero(Number(e.target.value));
+            }
+            aplicarFiltrosCombinados();
+        });
+    }
 });
